@@ -1,0 +1,25 @@
+{
+  "name": "personal-task-manager-expo-ts",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "eslint . --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "expo": "^51.0.0",
+    "expo-router": "^3.5.0",
+    "react": "18.2.0",
+    "react-native": "0.74.5",
+    "expo-linking": "~6.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "~18.2.79",
+    "@types/react-native": "^0.73.0",
+    "typescript": "~5.3.3"
+  }
+}
