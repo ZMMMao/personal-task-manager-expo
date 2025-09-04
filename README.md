@@ -94,6 +94,6 @@ A light **Context + Reducer** keeps app state in memory and available across rou
 - Open PRs with descriptive messages. Request a peer review and review a peer's PR.
 - Track tasks/bugs in **GitHub Issues**.
 
-## Notes
+## Notes/Improvement
 - No backend; all data is in-memory mock data per assignment.
-- For persistence, consider `expo-secure-store`/`AsyncStorage` (not required here).
+- For persistence, consider `expo-secure-store`/`AsyncStorage`.
