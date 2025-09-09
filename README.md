@@ -1,11 +1,11 @@
-# Personal Task Manager (Expo + TypeScript)
+gi# Personal Task Manager (Expo + TypeScript)
 
-A light, fully-typed React Native app built with **Expo** and **Expo Router**, implementing a personal task manager with:
+A light, fully-typed React Native app built with **Expo** and **TypeScript**, implementing a personal task manager with:
 - Task list from hard-coded mock data
 - Add / Edit / Delete tasks
 - Toggle task status (pending ↔ completed)
 - Details screen
-- **(Bonus)** Search by title
+- Search by title
 
 ## Tech Choices
 - **Expo** for fast setup and cross-platform dev (Android, iOS, Web).
@@ -17,25 +17,26 @@ A light, fully-typed React Native app built with **Expo** and **Expo Router**, i
 ```
 expo-ts/
   app/
-    _layout.tsx           # Router stack + providers
-    index.tsx             # Task list + search + add FAB
-    add.tsx               # Create task
-    task/[id].tsx         # Details + toggle + delete
-    edit/[id].tsx         # Edit task
+    _layout.tsx        # App shell: stack + providers
+    index.tsx          # Task list, search, + FAB
+    add.tsx            # Create task
+    task/[id].tsx      # Details: toggle/edit/delete
+    edit/[id].tsx      # Edit task
   components/
-    SearchBar.tsx
-    TaskItem.tsx
+    TaskItem.tsx       # Task row UI + callbacks
+    SearchBar.tsx      # Controlled input
   lib/
-    mockData.ts           # Hard-coded initial tasks
-    store.tsx             # Context + reducer for tasks
-    types.ts              # Task & enums
-  assets/                 # Expo assets (placeholder)
-  app.json
-  babel.config.js
-  index.js                # expo-router entry
-  package.json
-  tsconfig.json
-  README.md
+    types.ts           # Task & enums
+    store.tsx          # Context + reducer (CRUD/toggle)
+    mockData.ts        # Seed data
+  assets/              # icon.png, adaptive-icon.png, splash.png, favicon.png
+  index.js             # expo-router entry
+  app.json             # Expo config (icons, splash, scheme)
+  tsconfig.json        # strict TS
+  babel.config.js      # babel-preset-expo
+  package.json         # scripts + versions
+  README.md            # setup & troubleshooting
+
 ```
 
 ## Data Model
@@ -94,6 +95,6 @@ A light **Context + Reducer** keeps app state in memory and available across rou
 - Open PRs with descriptive messages. Request a peer review and review a peer's PR.
 - Track tasks/bugs in **GitHub Issues**.
 
-## Notes/Improvement
+## Notes/Future Improvement:
 - No backend; all data is in-memory mock data per assignment.
 - For persistence, consider `expo-secure-store`/`AsyncStorage`.
