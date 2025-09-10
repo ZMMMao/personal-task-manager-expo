@@ -1,5 +1,5 @@
 import { Task } from './types';
-
+// Sample initial tasks for seeding or testing
 export const initialTasks: Task[] = [
   {
     id: 't1',

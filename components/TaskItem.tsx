@@ -11,17 +11,19 @@ interface Props {
 }
 
 export default function TaskItem({ task, onToggle, onDelete, completeColor }: Props) {
-  // Dynamic style for completed tasks
+  // Build the row container style; if completed, tint the background
   const containerStyle = [
     styles.container,
     task.status == 'completed' && { backgroundColor: completeColor }
   ];
   return (
     <View style={containerStyle}>
+      {/* Left: tappable status icon (toggle, '✓' : '○')  */}
       <Pressable onPress={() => onToggle(task.id)} style={styles.status}>
         <Text style={styles.statusText}>{task.status === 'completed' ? '✓' : '○'}</Text>
       </Pressable>
 
+      {/* Middle: title/description with link to details */}
       <View style={styles.info}>
         <Link href={{ pathname: '/task/[id]', params: { id: task.id }}}>
           <Text style={[styles.title, task.status === 'completed' && styles.completed]} numberOfLines={1}>
@@ -31,6 +33,7 @@ export default function TaskItem({ task, onToggle, onDelete, completeColor }: Pr
         <Text style={styles.desc} numberOfLines={2}>{task.description}</Text>
       </View>
 
+      {/* Right: actions, edit and delete function */}
       <View style={styles.actions}>
         <Link href={{ pathname: '/edit/[id]', params: { id: task.id }}} style={styles.actionBtn}>
           <Text style={styles.link}>Edit</Text>

@@ -8,14 +8,16 @@ import { useTasks } from '../lib/store';
 // a set of light color options
 const SWATCHES = ['#E6F4EA', '#E0F2FE', '#EDE9FE', '#FEF3C7', '#E5E7EB'];
 
+// The main screen showing the list of tasks
 export default function HomeScreen() {
-  const { state, dispatch } = useTasks();
-  const [query, setQuery] = useState('');
-  const [open, setOpen] = useState(false); // controls of the modal
+  const { state, dispatch } = useTasks(); // get global task state and dispatch
+  const [query, setQuery] = useState(''); // search query
+  const [open, setOpen] = useState(false); // controls of the color modal
 
- // get from global settings
+  // Read the chosen "completed" color from global settings
   const completeColor = state.settings.completeColor;
 
+  // Client-side filter by title (case-insensitive)
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return state.tasks;
@@ -24,6 +26,7 @@ export default function HomeScreen() {
 
   return (
     <View style={{ flex : 1 }}>
+        {/* Top bar with search + a button to open the color picker */}
         <View style ={styles.topBar}>
           <SearchBar value={query} onChange={setQuery} />
           {/* Color Picker */}
@@ -32,6 +35,7 @@ export default function HomeScreen() {
           </Pressable>
         </View>
 
+      {/* Task List */}
       <FlatList
         contentContainerStyle={{ padding: 16 }}
         data={filtered}
@@ -47,7 +51,7 @@ export default function HomeScreen() {
         )}
       />
 
-      {/* Color Picker Modal */}
+      {/* Color Picker Modal: updates global settings via reducer */}
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
         <View style={styles.overlay}>
           <View style={styles.sheet}>
@@ -57,7 +61,7 @@ export default function HomeScreen() {
                   <Pressable
                     key={color}
                     onPress={() => {
-                        dispatch({ type: 'setCompleteColor', payload: { color } }); // save to global settings
+                        dispatch({ type: 'setCompleteColor', payload: { color } }); // global update
                         setOpen(false);
                     }}
                     style={[styles.swatch, { backgroundColor: color }]}
@@ -71,6 +75,7 @@ export default function HomeScreen() {
         </View>
       </Modal>
 
+      {/* Floating add button (FAB) */}
       <View pointerEvents="box-none" style={styles.fabWrap}>
         <Link href="/add" asChild>
             <Pressable style={styles.fab}>

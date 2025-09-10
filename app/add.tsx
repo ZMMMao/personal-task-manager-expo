@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, Pressable, Text, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTasks } from '../lib/store';
-
+// Screen to add a new task
 export default function AddTaskScreen() {
   const { dispatch } = useTasks();
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
+  // Add the task and go back to the list
   const add = () => {
     const t = title.trim();
     if (!t) {
@@ -21,12 +22,14 @@ export default function AddTaskScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Title input */}
       <TextInput
         placeholder="Title"
         value={title}
         onChangeText={setTitle}
         style={styles.input}
       />
+      {/* Description input */}
       <TextInput
         placeholder="Description"
         value={description}
@@ -35,6 +38,7 @@ export default function AddTaskScreen() {
         multiline
         numberOfLines={6}
       />
+      {/* Add button */}
       <Pressable onPress={add} style={styles.primaryBtn}>
         <Text style={styles.primaryText}>Add Task</Text>
       </Pressable>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, Pressable, Text, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { selectTaskById, useTasks } from '../../lib/store';
-
+// Screen to show task details, with options to toggle status, edit, or delete
 export default function EditTaskScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { state, dispatch } = useTasks();
@@ -11,7 +11,7 @@ export default function EditTaskScreen() {
 
   const [title, setTitle] = useState(task?.title ?? '');
   const [description, setDescription] = useState(task?.description ?? '');
-
+  // If task not found, show error
   if (!task) {
     return (
       <View style={styles.container}>
@@ -19,7 +19,7 @@ export default function EditTaskScreen() {
       </View>
     );
   }
-
+  // Save changes and go back to details
   const save = () => {
     const t = title.trim();
     if (!t) {
@@ -32,12 +32,14 @@ export default function EditTaskScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Title input */}
       <TextInput
         placeholder="Title"
         value={title}
         onChangeText={setTitle}
         style={styles.input}
       />
+      {/* Description input */}
       <TextInput
         placeholder="Description"
         value={description}
@@ -46,6 +48,7 @@ export default function EditTaskScreen() {
         multiline
         numberOfLines={6}
       />
+      {/* Save button */}
       <Pressable onPress={save} style={styles.primaryBtn}>
         <Text style={styles.primaryText}>Save Changes</Text>
       </Pressable>

@@ -1,11 +1,14 @@
-gi# Personal Task Manager (Expo + TypeScript)
+# Personal Task Manager (Expo + TypeScript)
 
-A light, fully-typed React Native app built with **Expo** and **TypeScript**, implementing a personal task manager with:
+A light, fully-typed React Native app built with **Expo** and **TypeScript**. It demonstrates clean component structure, a Context + Reducer store, and Expo Router navigation.
+
+## Features
 - Task list from hard-coded mock data
 - Add / Edit / Delete tasks
 - Toggle task status (pending ↔ completed)
 - Details screen
 - Search by title
+- **Completed status color picker** (tints completed rows)
 
 ## Tech Choices
 - **Expo** for fast setup and cross-platform dev (Android, iOS, Web).
@@ -18,7 +21,7 @@ A light, fully-typed React Native app built with **Expo** and **TypeScript**, im
 expo-ts/
   app/
     _layout.tsx        # App shell: stack + providers
-    index.tsx          # Task list, search, + FAB
+    index.tsx          # Task list, search, color picker, + FAB floating button
     add.tsx            # Create task
     task/[id].tsx      # Details: toggle/edit/delete
     edit/[id].tsx      # Edit task
@@ -27,7 +30,7 @@ expo-ts/
     SearchBar.tsx      # Controlled input
   lib/
     types.ts           # Task & enums
-    store.tsx          # Context + reducer (CRUD/toggle)
+    store.tsx          # Context + reducer (CRUD/toggle/setCompleetedColor)
     mockData.ts        # Seed data
   assets/              # icon.png, adaptive-icon.png, splash.png, favicon.png
   index.js             # expo-router entry
@@ -58,7 +61,7 @@ interface Task {
 ## State Management
 A light **Context + Reducer** keeps app state in memory and available across routes:
 - `add`, `update`, `delete`, `toggle`, `seed`
-- No external stores (per assignment).
+- setCompleteColor (for the completed-row tint)
 
 ## Navigation
 **Expo Router** (`Stack`) with typed routes:

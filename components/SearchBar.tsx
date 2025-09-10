@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
-
+// A simple search bar component
 interface Props {
   value: string;
   onChange: (text: string) => void;

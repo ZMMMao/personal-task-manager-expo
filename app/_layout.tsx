@@ -2,7 +2,7 @@ import React from 'react';
 import { Stack } from 'expo-router';
 import { TaskProvider } from '../lib/store';
 import { SafeAreaView, StatusBar } from 'react-native';
-
+// The root layout wrapping all screens with TaskProvider
 export default function RootLayout() {
   return (
     <TaskProvider>

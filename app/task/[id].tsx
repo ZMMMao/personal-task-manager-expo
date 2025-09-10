@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { selectTaskById, useTasks } from '../../lib/store';
-
+// Screen to show task details, with options to toggle status, edit, or delete
 export default function TaskDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { state, dispatch } = useTasks();
@@ -20,6 +20,7 @@ export default function TaskDetailsScreen() {
   const isCompleted = task.status === 'completed';
   const onToggle = () => dispatch({ type: 'toggle', payload: { id: task.id } });
   const onEdit = () => router.push({ pathname: '/edit/[id]', params: { id: task.id } });
+  // Confirm before deleting
   const onDelete = () =>
     Alert.alert('Delete task?', 'This action cannot be undone.', [
       { text: 'Cancel', style: 'cancel' },
@@ -36,7 +37,7 @@ export default function TaskDetailsScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{task.title}</Text>
-
+      {/* Status pill completed/pending */}
       <View style={styles.metaRow}>
         <Text style={styles.metaLabel}>Status:</Text>
         <View style={[styles.pill, isCompleted ? styles.pillCompleted : styles.pillPending]}>
