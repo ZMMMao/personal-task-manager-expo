@@ -7,11 +7,17 @@ interface Props {
   task: Task;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  completeColor: string; // color for completed tasks
 }
 
-export default function TaskItem({ task, onToggle, onDelete }: Props) {
+export default function TaskItem({ task, onToggle, onDelete, completeColor }: Props) {
+  // Dynamic style for completed tasks
+  const containerStyle = [
+    styles.container,
+    task.status == 'completed' && { backgroundColor: completeColor }
+  ];
   return (
-    <View style={styles.container}>
+    <View style={containerStyle}>
       <Pressable onPress={() => onToggle(task.id)} style={styles.status}>
         <Text style={styles.statusText}>{task.status === 'completed' ? '✓' : '○'}</Text>
       </Pressable>
@@ -44,7 +50,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E6E6E6',
+    borderColor: '#E5E7EB',
     marginBottom: 10,
     backgroundColor: '#fff',
     gap: 12

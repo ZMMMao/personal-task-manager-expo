@@ -2,16 +2,18 @@ import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import type { Task } from './types';
 import { initialTasks } from './mockData';
 
+export interface State {
+  tasks: Task[];
+  settings: {completeColor: string}; // chosen tint for completed rows
+}
+
 type Action =
   | { type: 'add'; payload: Omit<Task, 'id' | 'createdAt' | 'updatedAt'> }
   | { type: 'update'; payload: { id: string; title: string; description: string } }
   | { type: 'delete'; payload: { id: string } }
   | { type: 'toggle'; payload: { id: string } }
+  | { type: 'setCompleteColor'; payload: {color: string} } // new action for changing color
   | { type: 'seed'; payload: Task[] };
-
-interface State {
-  tasks: Task[];
-}
 
 const TaskStateContext = createContext<State | undefined>(undefined);
 const TaskDispatchContext = createContext<React.Dispatch<Action> | undefined>(undefined);
@@ -23,7 +25,7 @@ function makeId() {
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'seed': {
-      return { tasks: action.payload };
+      return { ...state, tasks: action.payload };
     }
     case 'add': {
       const now = new Date().toISOString();
@@ -35,10 +37,11 @@ function reducer(state: State, action: Action): State {
         createdAt: now,
         updatedAt: now
       };
-      return { tasks: [newTask, ...state.tasks] };
+      return { ...state, tasks: [newTask, ...state.tasks] };
     }
     case 'update': {
       return {
+        ...state,
         tasks: state.tasks.map(t => 
           t.id === action.payload.id
             ? { ...t, title: action.payload.title.trim(), description: action.payload.description.trim(), updatedAt: new Date().toISOString() }
@@ -47,15 +50,26 @@ function reducer(state: State, action: Action): State {
       };
     }
     case 'delete': {
-      return { tasks: state.tasks.filter(t => t.id != action.payload.id) };
+      return { ...state, tasks: state.tasks.filter(t => t.id != action.payload.id) };
     }
     case 'toggle': {
       return {
+        ...state,
         tasks: state.tasks.map(t =>
           t.id === action.payload.id
             ? { ...t, status: t.status === 'pending' ? 'completed' : 'pending', updatedAt: new Date().toISOString() }
             : t
         )
+      };
+    }
+    case 'setCompleteColor': {
+      // Immutable update of just the color
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          completeColor: action.payload.color
+        },
       };
     }
     default:
@@ -64,7 +78,10 @@ function reducer(state: State, action: Action): State {
 }
 
 export function TaskProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, { tasks: initialTasks });
+  const [state, dispatch] = useReducer(reducer, {
+    tasks: initialTasks,
+    settings: { completeColor: '#E6F4EA' }, // default color to soft green
+  });
   return (
     <TaskStateContext.Provider value={state}>
       <TaskDispatchContext.Provider value={dispatch}>
