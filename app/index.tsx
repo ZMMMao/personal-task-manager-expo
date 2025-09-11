@@ -38,6 +38,7 @@ export default function HomeScreen() {
       {/* Task List */}
       <FlatList
         contentContainerStyle={{ padding: 16 }}
+        showsVerticalScrollIndicator                   // show the scrollbar
         data={filtered}
         keyExtractor={(item) => item.id}
         ListEmptyComponent={<Text style={styles.empty}>No tasks yet. Add your first task!</Text>}
