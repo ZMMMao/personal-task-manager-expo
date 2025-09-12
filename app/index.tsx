@@ -41,7 +41,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator                   // show the scrollbar
         data={filtered}
         keyExtractor={(item) => item.id}
-        ListEmptyComponent={<Text style={styles.empty}>No tasks yet. Add your first task!</Text>}
+        ListEmptyComponent={<Text style={styles.empty}>{query ? 'No results. Try a different search.' : 'No tasks yet. Add your first task!'}</Text>} // empty state
         renderItem={({ item }) => (
           <TaskItem
             task={item}
