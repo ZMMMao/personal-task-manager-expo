@@ -1,10 +1,10 @@
 export type TaskStatus = 'pending' | 'completed';
 // Task interface representing a to-do item
 export interface Task {
-  id: string;
+  id: number;
   title: string;
   description: string;
   status: TaskStatus;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: number;
+  updatedAt: number;
 }
