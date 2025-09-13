@@ -20,9 +20,14 @@ type Action =
 const TaskStateContext = createContext<State | undefined>(undefined);
 const TaskDispatchContext = createContext<React.Dispatch<Action> | undefined>(undefined);
 
-// Simple id generator for demo purposes
-function makeId() {
-  return `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+// numeric ID generator
+let lastId = 0;
+function seedLastId(tasks: Task[]){
+    for(const t of tasks) if(t.id > lastId) lastId = t.id;
+}
+function makeId() : number {
+    lastId += 1;
+  return lastId;
 }
 
 // Pure reducer: always return NEW objects; never mutate "state" directly.
@@ -30,11 +35,13 @@ function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'seed': {
       // Completely replace tasks with provided array
-      return { ...state, tasks: action.payload };
+      const next = action.payload;
+      seedLastId(next);
+      return { ...state, tasks: next };
     }
     case 'add': {
       // Create new task with trimmed title/description
-      const now = new Date().toISOString();
+      const now = new Date();
       const newTask: Task = {
         id: makeId(),
         title: action.payload.title.trim(),
@@ -51,7 +58,7 @@ function reducer(state: State, action: Action): State {
         ...state,
         tasks: state.tasks.map(t => 
           t.id === action.payload.id
-            ? { ...t, title: action.payload.title.trim(), description: action.payload.description.trim(), updatedAt: new Date().toISOString() }
+            ? { ...t, title: action.payload.title.trim(), description: action.payload.description.trim(), updatedAt: new Date() }
             : t
         )
       };
@@ -66,7 +73,7 @@ function reducer(state: State, action: Action): State {
         ...state,
         tasks: state.tasks.map(t =>
           t.id === action.payload.id
-            ? { ...t, status: t.status === 'pending' ? 'completed' : 'pending', updatedAt: new Date().toISOString() }
+            ? { ...t, status: t.status === 'pending' ? 'completed' : 'pending', updatedAt: new Date() }
             : t
         )
       };
@@ -110,6 +117,6 @@ export function useTasks() {
 }
 
 // Selector helper by id
-export function selectTaskById(state: State, id: string) {
+export function selectTaskById(state: State, id: number) {
   return state.tasks.find(t => t.id === id);
 }
