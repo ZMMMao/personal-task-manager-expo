@@ -4,6 +4,7 @@ import { Link } from 'expo-router';
 import TaskItem from '../components/TaskItem';
 import SearchBar from '../components/SearchBar';
 import { useTasks } from '../lib/store';
+import { queryPrefix } from '../lib/searchIndex';
 
 // a set of light color options
 const SWATCHES = ['#E6F4EA', '#E0F2FE', '#EDE9FE', '#FEF3C7', '#E5E7EB'];
@@ -14,15 +15,15 @@ export default function HomeScreen() {
   const [query, setQuery] = useState(''); // search query
   const [open, setOpen] = useState(false); // controls of the color modal
 
-  // Read the chosen "completed" color from global settings
-  const completeColor = state.settings.completeColor;
 
   // Client-side filter by title (case-insensitive)
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return state.tasks;
-    return state.tasks.filter(t => t.title.toLowerCase().includes(q));
-  }, [state.tasks, query]);
+    const ids = queryPrefix(state.index, q);
+    const byId = new Map(state.tasks.map( t => [t.id, t] ));
+    return ids.map(id => byId.get(id)!).filter(Boolean);
+  }, [state.tasks, state.index, query]);
 
   return (
     <View style={{ flex : 1 }}>
@@ -40,12 +41,16 @@ export default function HomeScreen() {
         contentContainerStyle={{ padding: 16 }}
         showsVerticalScrollIndicator                   // show the scrollbar
         data={filtered}
-        keyExtractor={(item) => item.id}
-        ListEmptyComponent={<Text style={styles.empty}>{query ? 'No results. Try a different search.' : 'No tasks yet. Add your first task!'}</Text>} // empty state
+        keyExtractor={(item) => String(item.id) } // key by id
+        ListEmptyComponent={
+            // empty state and handle no search results
+            <Text style={styles.empty}>
+                {query ? 'No results. Try a different search.' : 'No tasks yet. Add your first task!'}
+            </Text>}
         renderItem={({ item }) => (
           <TaskItem
             task={item}
-            completeColor={completeColor} // pass color
+            completeColor={state.settings.completeColor} // pass color
             onToggle={(id) => dispatch({ type: 'toggle', payload: { id } })}
             onDelete={(id) => dispatch({ type: 'delete', payload: { id } })}
           />
