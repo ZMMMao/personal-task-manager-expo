@@ -19,11 +19,11 @@ export interface State {
 
 // All events that can change state (Reducer handles these)
 type Action =
-  | { type: 'seed'; payload: Task[] };
-  | { type: 'add'; payload: Omit<Task, 'id' | 'createdAt' | 'updatedAt'> }
-  | { type: 'update'; payload: { id: string; title: string; description: string } }
-  | { type: 'delete'; payload: { id: string } }
-  | { type: 'toggle'; payload: { id: string } }
+  | { type: 'seed'; payload: Task[] }
+  | { type: 'add'; payload: { title: string; description: string}}
+  | { type: 'update'; payload: { id: number; title: string; description: string } }
+  | { type: 'delete'; payload: { id: number } }
+  | { type: 'toggle'; payload: { id: number } }
   | { type: 'setCompleteColor'; payload: {color: string} } // new action for changing color
 
 const TaskStateContext = createContext<State | undefined>(undefined);

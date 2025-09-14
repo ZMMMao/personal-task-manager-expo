@@ -20,9 +20,9 @@ export default function HomeScreen() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return state.tasks;
-    count ids = queryPrefix(state.index, q);
+    const ids = queryPrefix(state.index, q);
     const byId = new Map(state.tasks.map( t => [t.id, t] ));
-    return ids.map(id => byOd.get(id)!).filter(Boolean);
+    return ids.map(id => byId.get(id)!).filter(Boolean);
   }, [state.tasks, state.index, query]);
 
   return (

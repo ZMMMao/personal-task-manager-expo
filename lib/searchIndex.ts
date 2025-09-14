@@ -1,47 +1,63 @@
 import {tokenize} from './tokenize';
 
 export type TaskId = number;
-export type InvertedIndex = Record<string, Set<TaskId>>;
+export type InvertedIndex = Map<string, Set<TaskId>>;
 
 /**
  * Build an inverted index from a list of tasks.
  */
-export function buildIndex<T extends {id : TaskId; title: string }>(
-    items: T[],
-    locale = 'en'
-): InvertedIndex{
-    const idx: InvertedIndex = {};
-    for(const it of items){
-        for (const tok of tokenize(it.title, locale)){
-            (idx[tok] ||= new Set()).add(it.id);
-        }
+export function buildIndex<T extends { id: TaskId; title: string }>(
+  items: T[],
+  locale = 'en'
+): InvertedIndex {
+  const idx: InvertedIndex = new Map();
+  for (const it of items) {
+    for (const tok of tokenize(it.title, locale)) {
+      const set = idx.get(tok) ?? new Set<TaskId>();
+      set.add(it.id);
+      idx.set(tok, set);
     }
-    return idx;
+  }
+  return idx;
 }
 
 /**
  * Copy-on-write add: clones touched sets so callers can keep immutability.
  */
-export function addToIndex(idx: InvertedIndex, id: TaskId, title: string, locale = 'en') {
+export function addToIndex(
+  idx: InvertedIndex,
+  id: TaskId,
+  title: string,
+  locale = 'en'
+): InvertedIndex {
+  const next = new Map(idx); // clone map reference
   for (const tok of tokenize(title, locale)) {
-    const set = new Set(idx[tok] ?? []);
-    set.add(id);
-    idx[tok] = set;
+    const cloned = new Set(next.get(tok) ?? []);
+    cloned.add(id);
+    next.set(tok, cloned);
   }
+  return next;
 }
 
 /**
  * Copy-on-write remove.
  */
-export function removeFromIndex(idx: InvertedIndex, id: TaskId, title: string, locale = 'en') {
+export function removeFromIndex(
+  idx: InvertedIndex,
+  id: TaskId,
+  title: string,
+  locale = 'en'
+): InvertedIndex {
+  const next = new Map(idx);
   for (const tok of tokenize(title, locale)) {
-    const current = idx[tok];
-    if (!current) continue;
-    const next = new Set(current);
-    next.delete(id);
-    if (next.size) idx[tok] = next;
-    else delete idx[tok];
+    const cur = next.get(tok);
+    if (!cur) continue;
+    const cloned = new Set(cur);
+    cloned.delete(id);
+    if (cloned.size) next.set(tok, cloned);
+    else next.delete(tok);
   }
+  return next;
 }
 
 /**
@@ -53,10 +69,10 @@ export function updateInIndex(
   oldTitle: string,
   newTitle: string,
   locale = 'en'
-) {
-  if (oldTitle === newTitle) return;
-  removeFromIndex(idx, id, oldTitle, locale);
-  addToIndex(idx, id, newTitle, locale);
+): InvertedIndex {
+  if (oldTitle === newTitle) return idx;
+  const afterRemove = removeFromIndex(idx, id, oldTitle, locale);
+  return addToIndex(afterRemove, id, newTitle, locale);
 }
 
 /**
@@ -65,7 +81,7 @@ export function updateInIndex(
 export function queryExact(idx: InvertedIndex, q: string): TaskId[] {
   const tok = q.trim().toLowerCase();
   if (!tok) return [];
-  return [...(idx[tok] ?? [])];
+  return [...(idx.get(tok) ?? [])];
 }
 
 /**
@@ -76,10 +92,8 @@ export function queryPrefix(idx: InvertedIndex, q: string): TaskId[] {
   const p = q.trim().toLowerCase();
   if (!p) return [];
   const hits = new Set<TaskId>();
-  for (const key in idx) {
-    if (key.startsWith(p)) {
-      for (const id of idx[key]) hits.add(id);
-    }
+  for (const [key, set] of idx) {
+    if (key.startsWith(p)) for (const id of set) hits.add(id);
   }
   return [...hits];
 }

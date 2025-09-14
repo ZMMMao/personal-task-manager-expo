@@ -6,6 +6,7 @@
     if(!input) return [];
     const s = input.toLowerCase();
 
+    // Use Intl.Segmenter if available (Node 14+, modern browsers, React Native 0.65+)
     const hasSegmenter =
         typeof (globalThis as any).Intl !== 'undefined' &&
         typeof (Intl as any).Segmenter === 'function';
